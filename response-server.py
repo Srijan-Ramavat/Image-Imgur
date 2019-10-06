@@ -1,20 +1,18 @@
-import http.server
-import socketserver
+import falcon
 
 
-class MyTCPHandler(socketserver.BaseRequestHandler):
-    def handle(self):
-        import ipdb
-        ipdb.set_trace()
-        self.data = self.request.recv(1024).strip()
-        print("{} wrote:".format(self.client_address[0]))
-        print(self.data)
-        self.request.sendall(self.data.upper())
+class QuoteResource:
+    def on_get(self, req, resp):
+        """Handles GET requests"""
+        quote = {
+            'quote': ("I've always been more interested in "
+                      "the future than in the past."),
+            'author':
+            'Grace Hopper'
+        }
+
+        resp.media = quote
 
 
-if __name__ == "__main__":
-    HOST = 'localhost'
-    PORT = 5000
-    with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as httpd:
-        print("serving at port", PORT)
-        request = httpd.serve_forever()
+api = falcon.API()
+api.add_route('/image', QuoteResource())
